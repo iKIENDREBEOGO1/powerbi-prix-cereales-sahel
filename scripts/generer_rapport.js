@@ -393,6 +393,7 @@ function entete(page, { titleM, title, chapoM, lede, withMois = true, withProdui
   if (withProduit) dropdown(page, 'produit', { x: 900, y: 44, width: 150, height: 48 }, 1100, { field: ['Produit', 'Produit'], header: 'Produit', value: 'Mil', sync: 'produit' });
   if (withMois) dropdown(page, 'mois', { x: 1058, y: 44, width: 198, height: 48 }, 1101, { field: ['Mois', 'Libellé'], header: 'Mois', value: MOIS_DEFAUT, sync: 'mois' });
   textbox(page, 'source', { x: M, y: 692, width: W - 2 * M, height: 18 }, 1004, [{ text: SOURCE, size: 7, color: C.muted }]);
+  textbox(page, 'auteur', { x: M, y: 704, width: W - 2 * M, height: 16 }, 1005, [{ text: "Réalisé par KIENDREBEOGO Innocent, ingénieur statisticien économiste · ikiendrebeogo01@gmail.com · github.com/iKIENDREBEOGO1/powerbi-prix-cereales-sahel", size: 8, color: C.muted }]);
 }
 const KPI_LAYOUT = (i) => ({ x: Math.round(M + i * ((W - 2 * M - 3 * 12) / 4 + 12)), y: 100, width: Math.round((W - 2 * M - 3 * 12) / 4), height: 84 });
 function kpis(page, list) {

@@ -3,9 +3,9 @@
   "name": "fb4324ee97ff7858c0e9",
   "position": {
     "x": 24,
-    "y": 699,
+    "y": 681,
     "width": 1232,
-    "height": 18,
+    "height": 16,
     "z": 1804,
     "tabOrder": 1804
   },
@@ -22,7 +22,7 @@
                     "value": "Source : PAM, WFP Food Prices (Burkina Faso, Mali, Niger, Tchad), via HDX, licence CC BY-IGO. Prix de détail au kilo en francs CFA (XOF et XAF à parité). Moyenne simple des marchés suivis.",
                     "textStyle": {
                       "fontFamily": "Segoe UI",
-                      "fontSize": "8pt",
+                      "fontSize": "7pt",
                       "color": "#F3E7CF"
                     }
                   }

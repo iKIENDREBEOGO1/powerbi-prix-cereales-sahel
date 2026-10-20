@@ -103,7 +103,8 @@ function frame({ title, subtitle, subtitleMeasure, alt, card = true }) {
   return v;
 }
 
-function write(page, id, pos, z, visual, filters) {
+function write(page, id, pos0, z, visual, filters) {
+  const pos = (pos0.y + pos0.height > 672 && pos0.y < 676 && pos0.height > 30) ? { ...pos0, height: 670 - pos0.y } : pos0;
   const v = { $schema: VISUAL_SCHEMA, name: id, position: { ...pos, z, tabOrder: z }, visual };
   if (filters && filters.length) v.filterConfig = { filters };
   const dir = path.join(DEF, 'pages', page, 'visuals', id);
@@ -396,9 +397,10 @@ function entete(page, { titleM, title, chapoM, lede, withMois = true, withProdui
   navigator(page, { x: 900, y: 22, width: 356, height: 26 }, 1003);
   if (withProduit) dropdown(page, 'produit', { x: 900, y: 52, width: 150, height: 48 }, 1100, { field: ['Produit', 'Produit'], header: 'Produit', value: 'Mil', sync: 'produit' });
   if (withMois) dropdown(page, 'mois', { x: 1058, y: 52, width: 198, height: 48 }, 1101, { field: ['Mois', 'Libellé'], header: 'Mois', value: MOIS_DEFAUT, sync: 'mois' });
-  rect(page, 'bande-or', { x: 0, y: 692, width: W, height: 4 }, 1800, OR);
-  rect(page, 'bande-brun', { x: 0, y: 696, width: W, height: 24 }, 1801, BRUN);
-  textbox(page, 'source', { x: M, y: 699, width: W - 2 * M, height: 18 }, 1804, [{ text: SOURCE, size: 8, color: '#F3E7CF' }]);
+  rect(page, 'bande-or', { x: 0, y: 676, width: W, height: 3 }, 1800, OR);
+  rect(page, 'bande-brun', { x: 0, y: 679, width: W, height: 41 }, 1801, BRUN);
+  textbox(page, 'source', { x: M, y: 681, width: W - 2 * M, height: 16 }, 1804, [{ text: SOURCE, size: 7, color: '#F3E7CF' }]);
+  textbox(page, 'auteur', { x: M, y: 698, width: W - 2 * M, height: 16 }, 1805, [{ text: "Réalisé par KIENDREBEOGO Innocent, ingénieur statisticien économiste · ikiendrebeogo01@gmail.com · github.com/iKIENDREBEOGO1/powerbi-prix-cereales-sahel", size: 7, color: '#F3E7CF' }]);
 }
 const KPI_LAYOUT = (i) => ({ x: Math.round(M + i * ((W - 2 * M - 3 * 12) / 4 + 12)), y: 100, width: Math.round((W - 2 * M - 3 * 12) / 4), height: 84 });
 
