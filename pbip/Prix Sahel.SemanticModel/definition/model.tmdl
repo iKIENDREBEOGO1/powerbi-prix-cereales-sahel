@@ -1,0 +1,18 @@
+model Model
+	culture: fr-FR
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	discourageImplicitMeasures
+	sourceQueryCulture: fr-FR
+	dataAccessOptions
+		legacyRedirects
+		returnErrorValuesAsNull
+
+annotation PBI_QueryOrder = ["Dossier données","Prix","Marché","Mois","Produit","Pays"]
+
+annotation PBI_ProTooling = ["DevMode"]
+
+ref table Prix
+ref table 'Marché'
+ref table Mois
+ref table Produit
+ref table Pays

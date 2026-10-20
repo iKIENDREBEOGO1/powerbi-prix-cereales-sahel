@@ -1,0 +1,90 @@
+{
+  "$schema": "https://raw.githubusercontent.com/microsoft/powerbi-desktop-samples/main/Report%20Theme%20JSON%20Schema/reportThemeSchema-2.153.json",
+  "name": "PapierEtEncre.json",
+  "dataColors": [
+    "#1A1A1A",
+    "#8F887C",
+    "#1F3A5F",
+    "#C9C2B6",
+    "#57514A",
+    "#CDFACD",
+    "#FAE61E",
+    "#E67800",
+    "#C80000",
+    "#640000"
+  ],
+  "foreground": "#1A1A1A",
+  "foregroundNeutralSecondary": "#6B6B6B",
+  "foregroundNeutralTertiary": "#6B6B6B",
+  "background": "#FFFFFF",
+  "backgroundLight": "#DEDAD1",
+  "backgroundNeutral": "#EDE8DF",
+  "tableAccent": "#1F3A5F",
+  "good": "#1F3A5F",
+  "neutral": "#8F887C",
+  "bad": "#C80000",
+  "maximum": "#1A1A1A",
+  "center": "#8F887C",
+  "minimum": "#F1EDE6",
+  "null": "#EDE8DF",
+  "textClasses": {
+    "callout": {
+      "fontSize": 26,
+      "fontFace": "DIN",
+      "color": "#1A1A1A"
+    },
+    "title": {
+      "fontSize": 11,
+      "fontFace": "Segoe UI Semibold",
+      "color": "#1A1A1A"
+    },
+    "header": {
+      "fontSize": 11,
+      "fontFace": "Segoe UI Semibold",
+      "color": "#1A1A1A"
+    },
+    "label": {
+      "fontSize": 9,
+      "fontFace": "Segoe UI",
+      "color": "#1A1A1A"
+    }
+  },
+  "visualStyles": {
+    "*": {
+      "*": {
+        "background": [
+          {
+            "show": true,
+            "color": {
+              "solid": {
+                "color": "#FFFFFF"
+              }
+            },
+            "transparency": 0
+          }
+        ],
+        "border": [
+          {
+            "show": true,
+            "color": {
+              "solid": {
+                "color": "#DEDAD1"
+              }
+            },
+            "radius": 4
+          }
+        ],
+        "dropShadow": [
+          {
+            "show": false
+          }
+        ],
+        "visualHeader": [
+          {
+            "show": false
+          }
+        ]
+      }
+    }
+  }
+}

@@ -1,0 +1,37 @@
+/// Cinq céréales suivies : mil, sorgho, maïs, riz importé, riz local.
+table Produit
+	lineageTag: 011333fc-954c-45b7-ab76-453d3aedaca9
+
+	/// Produit
+	column Produit
+		dataType: string
+		isKey
+		lineageTag: 28f83c4b-206f-4db7-afb8-b0f07654d158
+		summarizeBy: none
+		sourceColumn: produit
+		sortByColumn: 'Ordre produit'
+	
+		annotation SummarizationSetBy = Automatic
+	
+	/// Ordre produit
+	column 'Ordre produit'
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 56d10eff-6129-4c1b-a6c8-de3e2b20e87e
+		summarizeBy: none
+		sourceColumn: ordre_produit
+	
+		annotation SummarizationSetBy = Automatic
+	
+	partition Produit = m
+		mode: import
+		source =
+				let
+				    // Lecture du CSV produit par scripts/preparer_donnees.py
+				    Source = Csv.Document(File.Contents(#"Dossier données" & "produits.csv"), [Delimiter = ",", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    #"Promoted headers" = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
+				    #"Changed types" = Table.TransformColumnTypes(#"Promoted headers", {{"ordre_produit", Int64.Type}}, "en-US")
+				in
+				    #"Changed types"
+	

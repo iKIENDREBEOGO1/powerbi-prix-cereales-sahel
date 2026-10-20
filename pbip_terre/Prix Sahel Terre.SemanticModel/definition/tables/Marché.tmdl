@@ -1,0 +1,66 @@
+/// Marchés suivis par le PAM, avec leur région, leur pays et leurs coordonnées.
+table 'Marché'
+	lineageTag: 339177c6-6d49-4f46-aa27-fa4e845bd4dd
+
+	/// Marché et pays
+	column 'Marché'
+		dataType: string
+		isKey
+		lineageTag: 81ad8c73-2742-4e3d-aca0-9bed5d2865fe
+		summarizeBy: none
+		sourceColumn: cle_marche
+	
+		annotation SummarizationSetBy = Automatic
+	
+	/// Région
+	column 'Région'
+		dataType: string
+		lineageTag: 9057bd3f-6cea-489a-a5e6-e8f0ec6ec9d0
+		summarizeBy: none
+		sourceColumn: region
+	
+		annotation SummarizationSetBy = Automatic
+	
+	/// code_pays
+	column code_pays
+		dataType: string
+		isHidden
+		lineageTag: 8655021c-d144-4ff0-a872-74f1fac86f44
+		summarizeBy: none
+		sourceColumn: code_pays
+	
+		annotation SummarizationSetBy = Automatic
+	
+	/// latitude
+	column latitude
+		dataType: double
+		isHidden
+		formatString: 0.00
+		lineageTag: 24cc1e54-bf28-4ebf-af4f-a46d0051711e
+		summarizeBy: none
+		sourceColumn: latitude
+	
+		annotation SummarizationSetBy = Automatic
+	
+	/// longitude
+	column longitude
+		dataType: double
+		isHidden
+		formatString: 0.00
+		lineageTag: a9310783-ee62-4ae1-ade4-ec9b9eb76c6e
+		summarizeBy: none
+		sourceColumn: longitude
+	
+		annotation SummarizationSetBy = Automatic
+	
+	partition 'Marché' = m
+		mode: import
+		source =
+				let
+				    // Lecture du CSV produit par scripts/preparer_donnees.py
+				    Source = Csv.Document(File.Contents(#"Dossier données" & "marches.csv"), [Delimiter = ",", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    #"Promoted headers" = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
+				    #"Changed types" = Table.TransformColumnTypes(#"Promoted headers", {{"latitude", type number}, {"longitude", type number}}, "en-US")
+				in
+				    #"Changed types"
+	

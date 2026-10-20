@@ -1,0 +1,278 @@
+/// Prix de détail au kilo (franc CFA) par marché, produit et mois. Source : PAM, HDX. Un mois sans relevé reste absent, il n’est jamais rempli.
+table Prix
+	lineageTag: 259c2f6a-b05c-4529-a265-32116e7132a6
+
+	/// Prix moyen au kilo (franc CFA) sur les marchés et les mois sélectionnés. Moyenne simple des marchés, sans pondération.
+	measure 'Prix moyen' = AVERAGE(Prix[prix_kg])
+		formatString: #,0
+		displayFolder: Prix
+		lineageTag: 03e01d19-7de5-4325-a8ae-cb986e69debc
+	
+	/// Nombre de marchés qui ont un relevé pour la sélection.
+	measure 'Marchés observés' = DISTINCTCOUNT(Prix[cle_marche]) + 0
+		formatString: 0
+		displayFolder: Prix
+		lineageTag: b5e0b9dc-c9bb-4379-a42c-d03d38dfd7fc
+	
+	/// Variation moyenne des marchés par rapport au même mois un an plus tôt.
+	measure 'Variation sur un an' = AVERAGE(Prix[var_an])
+		formatString: +0 %;-0 %;0 %
+		displayFolder: Prix
+		lineageTag: 144cf80f-1f7a-46e4-aa2b-0409425fd15d
+	
+	/// Écart moyen des marchés par rapport à la moyenne du même mois sur les 5 années précédentes.
+	measure 'Écart à la moyenne 5 ans' = AVERAGE(Prix[var_5ans])
+		formatString: +0 %;-0 %;0 %
+		displayFolder: Prix
+		lineageTag: a00acaac-9b5b-4c90-aa5e-fe6b6c9812e5
+	
+	/// Marchés dont le prix dépasse de plus de 25 % la moyenne des 5 années précédentes (même mois).
+	measure 'Marchés en alerte' = COUNTROWS(FILTER(VALUES('Marché'[Marché]), [Écart à la moyenne 5 ans] > 0.25)) + 0
+		formatString: 0
+		displayFolder: Alertes
+		lineageTag: 6f305c6f-59a2-48a5-ab4e-7faf0e75767b
+	
+	/// Marchés pour lesquels on peut calculer un écart (au moins 3 années de référence).
+	measure 'Marchés avec écart connu' = COUNTROWS(FILTER(VALUES('Marché'[Marché]), NOT ISBLANK([Écart à la moyenne 5 ans]))) + 0
+		formatString: 0
+		displayFolder: Alertes
+		lineageTag: f62d60c8-fde4-44b1-a2dc-10b2b64071e2
+	
+	/// Part des marchés en alerte parmi ceux qui ont un écart connu.
+	measure 'Part des marchés en alerte' = DIVIDE([Marchés en alerte], [Marchés avec écart connu])
+		formatString: 0 %
+		displayFolder: Alertes
+		lineageTag: 30ac232e-8db5-441e-a363-05933023c336
+	
+	/// Rang du marché selon l’écart à la moyenne des 5 ans (1 = le plus au-dessus de sa normale).
+	measure 'Rang du marché' = IF(ISBLANK([Écart à la moyenne 5 ans]), BLANK(), RANKX(ALLSELECTED('Marché'[Marché]), [Écart à la moyenne 5 ans], , DESC, Dense))
+		formatString: 0
+		displayFolder: Alertes
+		lineageTag: bde87fca-111d-4e62-a730-87a9e3bca518
+	
+	/// Longitude du marché (axe de la carte des marchés).
+	measure Longitude = AVERAGE('Marché'[longitude])
+		formatString: 0.00
+		displayFolder: Carte
+		lineageTag: 5a3d4c3d-016f-497e-a974-054e24ed0680
+	
+	/// Latitude du marché (axe de la carte des marchés).
+	measure Latitude = AVERAGE('Marché'[latitude])
+		formatString: 0.00
+		displayFolder: Carte
+		lineageTag: f408d808-6c53-46a6-ae83-6df25262bec6
+	
+	/// Produit analysé (mil par défaut).
+	measure 'Produit choisi' = SELECTEDVALUE(Produit[Produit], "Mil")
+		displayFolder: Textes
+		lineageTag: 69f32c08-ee2b-418d-a8a4-8824d160b09a
+	
+	/// Mois analysé.
+	measure 'Mois choisi' = SELECTEDVALUE(Mois[Libellé], "Plusieurs mois")
+		displayFolder: Textes
+		lineageTag: 18f7dfb3-be72-4cdc-aee3-574e5b0c1cc1
+	
+	/// Prix moyen écrit avec son unité.
+	measure 'Prix moyen (texte)' = IF(ISBLANK([Prix moyen]), "n.d.", FORMAT([Prix moyen], "#,0") & " FCFA/kg")
+		displayFolder: Textes
+		lineageTag: a395ed7b-a8a6-44b2-acf3-7025b39c3067
+	
+	/// Variation sur un an, avec signe.
+	measure 'Variation sur un an (texte)' = IF(ISBLANK([Variation sur un an]), "n.d.", IF([Variation sur un an] >= 0, "+", "") & FORMAT([Variation sur un an] * 100, "0") & " %")
+		displayFolder: Textes
+		lineageTag: 235a22ee-79dd-429d-a4db-53e3814ad679
+	
+	/// Écart à la moyenne 5 ans, avec signe.
+	measure 'Écart à la moyenne 5 ans (texte)' = IF(ISBLANK([Écart à la moyenne 5 ans]), "n.d.", IF([Écart à la moyenne 5 ans] >= 0, "+", "") & FORMAT([Écart à la moyenne 5 ans] * 100, "0") & " %")
+		displayFolder: Textes
+		lineageTag: d314c97a-bf2a-495f-ace8-e575d2e659a4
+	
+	/// Marchés en alerte, sur ceux qui ont un écart connu.
+	measure 'Marchés en alerte (texte)' = [Marchés en alerte] & " sur " & [Marchés avec écart connu]
+		displayFolder: Textes
+		lineageTag: f8d3a180-3714-49d7-a396-26968425f3ce
+	
+	/// Pays sans aucun relevé pour la sélection.
+	measure 'Pays sans relevé' = CONCATENATEX(FILTER(VALUES(Pays[Pays]), ISBLANK([Prix moyen])), Pays[Pays], ", ", Pays[Pays], ASC)
+		displayFolder: Couverture
+		lineageTag: 6f14b2c7-2ee0-4c3e-aa0d-85f52c359bac
+	
+	/// Phrase de couverture : pays sans relevé.
+	measure 'Note de couverture' =
+			VAR _l = [Pays sans relevé]
+			RETURN
+			    IF(_l = "", "Les 4 pays ont des relevés pour cette sélection.", "Aucun relevé pour " & _l & " : ce n'est pas un prix nul, simplement pas de relevé.")
+		displayFolder: Couverture
+		lineageTag: ba18489d-7831-4241-a5fb-d554f80f1d6f
+	
+	/// Titre-phrase de la page Synthèse.
+	measure 'Titre prix' =
+			VAR _e = [Écart à la moyenne 5 ans]
+			RETURN
+			    [Produit choisi] & ", " & LOWER([Mois choisi]) & " : " & [Prix moyen (texte)]
+			        & IF(ISBLANK(_e), "", ", " & FORMAT(ABS(_e) * 100, "0") & " % " & IF(_e < 0, "sous", "au-dessus de") & " la moyenne des 5 ans")
+		displayFolder: Textes
+		lineageTag: 70780b40-b958-469e-aa70-5149e69de149
+	
+	/// Pays sans relevé, en quelques mots.
+	measure 'Note courte' =
+			VAR _l = [Pays sans relevé]
+			RETURN
+			    IF(_l = "", "", " Pas de relevé pour " & _l & " ce mois-là.")
+		displayFolder: Couverture
+		lineageTag: 81d6c291-7a90-431e-a8dc-31b7437b52e9
+	
+	/// Chapô de la page Synthèse.
+	measure 'Chapô prix' = "Variation sur un an : " & [Variation sur un an (texte)] & ". Marchés au moins 25 % au-dessus de la moyenne des 5 ans : " & [Marchés en alerte (texte)] & "." & [Note courte]
+		displayFolder: Textes
+		lineageTag: 793458e9-73c6-4e91-aef7-16cf07707db2
+	
+	/// Titre-phrase de la page Marchés.
+	measure 'Titre marchés' = [Produit choisi] & ", " & LOWER([Mois choisi]) & " : " & [Marchés en alerte] & " marchés sur " & [Marchés avec écart connu] & " à +25 % ou plus de leur normale"
+		displayFolder: Textes
+		lineageTag: 80a5d7d9-e2d1-4c20-a157-4f24c97bc299
+	
+	/// Couleur du marché ou de la case selon l’écart à la moyenne 5 ans.
+	measure 'Couleur écart 5 ans' =
+			VAR _e = [Écart à la moyenne 5 ans]
+			RETURN
+			    SWITCH(
+			        TRUE(),
+			        ISBLANK(_e), "#B5A68A",
+			        _e > 0.25, "#B5651D",
+			        _e > 0.1, "#E39B5A",
+			        _e >= -0.1, "#E6DCC6",
+			        _e >= -0.25, "#8CC2C6",
+			        "#4F9AA3"
+			    )
+		displayFolder: Mise en forme
+		lineageTag: 7767a981-27b1-4172-a691-d2e1037e2891
+	
+	/// Texte lisible sur chaque classe.
+	measure 'Couleur texte écart 5 ans' =
+			VAR _e = [Écart à la moyenne 5 ans]
+			RETURN
+			    IF(NOT ISBLANK(_e) && (_e > 0.1 || _e < -0.25), "#FFFFFF", "#1A1A1A")
+		displayFolder: Mise en forme
+		lineageTag: 3b2df1d6-b85f-443e-a33e-edabd929d570
+	
+	/// Couleur de la case selon la variation sur un an.
+	measure 'Couleur variation un an' =
+			VAR _e = [Variation sur un an]
+			RETURN
+			    SWITCH(
+			        TRUE(),
+			        ISBLANK(_e), "#B5A68A",
+			        _e > 0.25, "#B5651D",
+			        _e > 0.1, "#E39B5A",
+			        _e >= -0.1, "#E6DCC6",
+			        _e >= -0.25, "#8CC2C6",
+			        "#4F9AA3"
+			    )
+		displayFolder: Mise en forme
+		lineageTag: 69257e27-d2fe-4d90-ac6b-62c4acb731a1
+	
+	/// Texte lisible sur chaque classe.
+	measure 'Couleur texte variation un an' =
+			VAR _e = [Variation sur un an]
+			RETURN
+			    IF(NOT ISBLANK(_e) && (_e > 0.1 || _e < -0.25), "#FFFFFF", "#1A1A1A")
+		displayFolder: Mise en forme
+		lineageTag: 745d05c4-7532-464d-abb1-93c7c6b9af7a
+	
+	/// Valeur affichée dans les cases : écart en %, « n.d. » sans donnée.
+	measure 'Étiquette écart 5 ans' = IF(ISBLANK([Écart à la moyenne 5 ans]), "n.d.", FORMAT([Écart à la moyenne 5 ans] * 100, "+0;-0;0"))
+		displayFolder: Mise en forme
+		lineageTag: 8b82f2bb-63f7-4d46-a738-7995ac19359a
+	
+	/// Valeur affichée dans les cases : variation en %, « n.d. » sans donnée.
+	measure 'Étiquette variation un an' = IF(ISBLANK([Variation sur un an]), "n.d.", FORMAT([Variation sur un an] * 100, "+0;-0;0"))
+		displayFolder: Mise en forme
+		lineageTag: 72d0e253-44be-4f2f-a913-ad37712523f5
+	
+	/// cle_marche
+	column cle_marche
+		dataType: string
+		isHidden
+		lineageTag: 3d61cc1a-2dc4-4427-a8d3-ee803d53264b
+		summarizeBy: none
+		sourceColumn: cle_marche
+	
+		annotation SummarizationSetBy = Automatic
+	
+	/// produit
+	column produit
+		dataType: string
+		isHidden
+		lineageTag: ad0d2ea6-4af9-45f6-a481-d9cf29556a09
+		summarizeBy: none
+		sourceColumn: produit
+	
+		annotation SummarizationSetBy = Automatic
+	
+	/// mois
+	column mois
+		dataType: dateTime
+		isHidden
+		formatString: yyyy-mm-dd
+		lineageTag: 93779a85-397f-4c11-a294-471853224761
+		summarizeBy: none
+		sourceColumn: mois
+	
+		annotation SummarizationSetBy = Automatic
+	
+	/// prix_kg
+	column prix_kg
+		dataType: double
+		isHidden
+		formatString: #,0.0
+		lineageTag: 37b94680-7db3-44c0-a85b-f13abcb2e4fb
+		summarizeBy: none
+		sourceColumn: prix_kg
+	
+		annotation SummarizationSetBy = Automatic
+	
+	/// usd_kg
+	column usd_kg
+		dataType: double
+		isHidden
+		formatString: 0.000
+		lineageTag: 8b44fff7-49b8-4922-a324-f270be68857a
+		summarizeBy: none
+		sourceColumn: usd_kg
+	
+		annotation SummarizationSetBy = Automatic
+	
+	/// var_an
+	column var_an
+		dataType: double
+		isHidden
+		formatString: 0.0 %
+		lineageTag: b0252414-089d-4d74-a11b-5a7d84edcf58
+		summarizeBy: none
+		sourceColumn: var_an
+	
+		annotation SummarizationSetBy = Automatic
+	
+	/// var_5ans
+	column var_5ans
+		dataType: double
+		isHidden
+		formatString: 0.0 %
+		lineageTag: 87e342d7-49ee-4c2c-a7dc-42adb68504ab
+		summarizeBy: none
+		sourceColumn: var_5ans
+	
+		annotation SummarizationSetBy = Automatic
+	
+	partition Prix = m
+		mode: import
+		source =
+				let
+				    // Lecture du CSV produit par scripts/preparer_donnees.py
+				    Source = Csv.Document(File.Contents(#"Dossier données" & "prix.csv"), [Delimiter = ",", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    #"Promoted headers" = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
+				    #"Changed types" = Table.TransformColumnTypes(#"Promoted headers", {{"mois", type date}, {"prix_kg", type number}, {"usd_kg", type number}, {"var_an", type number}, {"var_5ans", type number}}, "en-US")
+				in
+				    #"Changed types"
+	

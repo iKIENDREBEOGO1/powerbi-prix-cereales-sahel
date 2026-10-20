@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "SemanticModel",
+    "displayName": "Prix Sahel Terre"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "fa1bd108-c038-4620-a679-044c2c05cb69"
+  }
+}

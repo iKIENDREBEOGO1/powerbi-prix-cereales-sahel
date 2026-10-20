@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "Report",
+    "displayName": "Prix Sahel"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "9b3e5a71-2c4d-4f86-b1a0-7e2d6c8f4a33"
+  }
+}

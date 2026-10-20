@@ -1,0 +1,78 @@
+/// Un mois par ligne, de janvier 2010 au dernier mois publié.
+table Mois
+	lineageTag: 919b8838-8f3e-4fd9-a4a4-d9cbd7470f2d
+
+	/// Mois et année
+	column 'Libellé'
+		dataType: string
+		lineageTag: 707950d7-2b9b-4a0a-aa29-661216dfb2e6
+		summarizeBy: none
+		sourceColumn: libelle
+		sortByColumn: Ordre
+	
+		annotation SummarizationSetBy = Automatic
+	
+	/// Premier jour du mois (clé et axe continu des courbes)
+	column 'Date du mois'
+		dataType: dateTime
+		isKey
+		formatString: mmm yyyy
+		lineageTag: 86e6352d-f109-409f-af21-18a5c225ea1c
+		summarizeBy: none
+		sourceColumn: mois
+	
+		annotation SummarizationSetBy = Automatic
+	
+	/// Année
+	column 'Année'
+		dataType: int64
+		formatString: 0
+		lineageTag: e0cc9200-cf56-490a-a448-bb859da1c761
+		summarizeBy: none
+		sourceColumn: annee
+	
+		annotation SummarizationSetBy = Automatic
+	
+	/// Mois
+	column Mois
+		dataType: string
+		lineageTag: 15fd27bd-a00f-4a16-aadb-4e0b4371bc93
+		summarizeBy: none
+		sourceColumn: mois_nom
+		sortByColumn: 'Numéro du mois'
+	
+		annotation SummarizationSetBy = Automatic
+	
+	/// Numéro du mois
+	column 'Numéro du mois'
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 2612ad56-eafd-4138-ac1d-906489f37eb3
+		summarizeBy: none
+		sourceColumn: mois_num
+	
+		annotation SummarizationSetBy = Automatic
+	
+	/// Ordre
+	column Ordre
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 1fa88325-8f79-4d84-af3e-af7a25d3dba3
+		summarizeBy: none
+		sourceColumn: ordre
+	
+		annotation SummarizationSetBy = Automatic
+	
+	partition Mois = m
+		mode: import
+		source =
+				let
+				    // Lecture du CSV produit par scripts/preparer_donnees.py
+				    Source = Csv.Document(File.Contents(#"Dossier données" & "mois.csv"), [Delimiter = ",", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    #"Promoted headers" = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
+				    #"Changed types" = Table.TransformColumnTypes(#"Promoted headers", {{"mois", type date}, {"annee", Int64.Type}, {"mois_num", Int64.Type}, {"ordre", Int64.Type}}, "en-US")
+				in
+				    #"Changed types"
+	

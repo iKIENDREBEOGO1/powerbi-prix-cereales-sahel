@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "Report",
+    "displayName": "Prix Sahel Terre"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "4c8d2f60-7a1b-4e39-9d52-3b6f0a8e1c77"
+  }
+}

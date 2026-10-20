@@ -1,0 +1,15 @@
+relationship bec2535b-9de5-48db-a08a-bb61178df4d1
+	fromColumn: Prix.cle_marche
+	toColumn: 'Marché'.'Marché'
+
+relationship fb9f2c38-8b16-46fa-a8a6-4d5e87dca1f4
+	fromColumn: Prix.mois
+	toColumn: Mois.'Date du mois'
+
+relationship 0fe0720b-f6f7-4059-a488-657f8286a4cd
+	fromColumn: Prix.produit
+	toColumn: Produit.Produit
+
+relationship 9328e987-b770-4a7f-a6f1-115465bed9e4
+	fromColumn: 'Marché'.code_pays
+	toColumn: Pays.'Code pays'

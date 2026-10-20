@@ -1,0 +1,5 @@
+/// Dossier qui contient les CSV produits par scripts/preparer_donnees.py (terminé par une barre oblique inverse)
+expression 'Dossier données' = "C:\chemin\vers\donnees\" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
+	lineageTag: c227c861-57f3-497d-ab93-ac1d87ef3e0c
+
+	annotation PBI_ResultType = Text
